@@ -10,10 +10,10 @@
 #define WIFI_PASSWORD "YOUR_PASSWORD"
 
 // Insert Firebase project API Key
-#define API_KEY "AIzaSyBpfYPHwgxLhHvnzblC5zrLvk_4GDuHYKA"
+#define API_KEY "AIzaSyCIB8GeCh0hNUihhEy3AKFxrFbvK3YAcYk"
 
 // Insert RTDB URLefine the RTDB URL */
-#define DATABASE_URL "https://beecon-4c612-default-rtdb.europe-west1.firebasedatabase.app/"
+#define DATABASE_URL "https://iotbeehive-9e6e7-default-rtdb.europe-west1.firebasedatabase.app/"
 
 #define temperatureSensorPin 13
 
