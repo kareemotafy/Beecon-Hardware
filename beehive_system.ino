@@ -1,54 +1,45 @@
-// #include <DHT.h>
-#include <Wire.h>
+#include <Arduino.h>
 
-// DHT11 pin
-#define DHTPIN 13
-// #define DHTTYPE DHT11
-// DHT dht(DHTPIN, DHTTYPE);
+// firebase functions
+#include "firebase.h"
 
-// MQ135 pin
-#define CO2_PIN  36
-// LDR pin
-#define  LDR_PIN = 6;
+// Insert your network credentials
+#define WIFI_SSID "YOUR_SSID"
+#define WIFI_PASSWORD "YOUR_PASSWORD"
 
-// Variables to store sensor readings
-  int temp_adc_val;
-float temperature = 0.0;
-float humidity = 0.0;
-float co2 = 0.0;
-int lightLevel = 0;
+// Insert Firebase project API Key
+#define API_KEY "AIzaSyCIB8GeCh0hNUihhEy3AKFxrFbvK3YAcYk"
 
+// Insert RTDB URLefine the RTDB URL */
+#define DATABASE_URL "https://iotbeehive-9e6e7-default-rtdb.europe-west1.firebasedatabase.app/"
 
-void setup() {
+#define temperatureSensorPin 13
+
+void setup()
+{
+  // begin serial communication
   Serial.begin(115200);
 
-  // // Initialize DHT sensor
-  // dht.begin();
+  // Wifi Connection
+  wifiConnect(WIFI_SSID, WIFI_PASSWORD);
 
+  // initialize Firebase
+  firebaseInit(API_KEY, DATABASE_URL);
 }
 
-void loop() {
-  // Read temperature and humidity from DHT11
-  // humidity = dht.readHumidity();
-  // temperature = dht.readTemperature();
-temp_adc_val = analogRead(DHTPIN);
-temperature = (temp_adc_val * 4.88);
-temperature = (temperature/10);
-  // Read CO2 level from MQ135
-  co2 = analogRead(CO2_PIN);
+void loop()
+{
 
-  // Read light level from LDR
-  int lightLevel = 0;
+  // Read the temperature from the sensor
+  float temperature = analogRead(temperatureSensorPin) * 5.0 / 1024.0;
 
-  // Print sensor readings
+  // Store the temperature data in Firebase
+  storeTemperatureData(temperature);
+
+  // Print the temperature to the serial monitor
   Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.print("Humidity: ");
-  Serial.print(humidity);
-  Serial.print("CO2 Level: ");
-  Serial.print(co2);
-  Serial.print(" kg\tLight Level: ");
-  Serial.println(lightLevel);
+  Serial.println(temperature);
 
-  delay(10000); // Delay for 10 seconds before taking the next reading
+  // Wait for 1 second before reading the temperature again
+  delay(1000);
 }
