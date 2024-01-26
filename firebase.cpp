@@ -1,12 +1,42 @@
+#include "firebase.h"
+#include "addons/TokenHelper.h"
+#include "addons/RTDBHelper.h"
 
-#ifndef SENSORS_H
-#define SENSORS_H
-
-//include Firebase SDK for ESP32
-#include <Firebase_ESP_Client.h>
-
-//Define Firebase Data object
+FirebaseAuth auth;
+FirebaseConfig config;
 FirebaseData fbdo;
+
+void wifiConnect(const char* ssid, const char* password) {
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(300);
+  }
+  Serial.println();
+  Serial.print("Connected with IP: ");
+  Serial.println(WiFi.localIP());
+  Serial.println();
+}
+
+void firebaseInit(const char* apiKey, const char* dbUrl) {
+  config.api_key = apiKey;
+  config.database_url = dbUrl;
+
+  bool signupOK = false;
+
+  if (Firebase.signUp(&config, &auth, "", "")) {
+    Serial.println("ok");
+    signupOK = true;
+  } else {
+    Serial.printf("%s\n", config.signer.signupError.message.c_str());
+  }
+
+  config.token_status_callback = tokenStatusCallback;
+
+  Firebase.begin(&config, &auth);
+  Firebase.reconnectWiFi(true);
+}
 
 // Generic function to store sensor data in Firebase
 void storeSensorData(const char* sensorName, float sensorValue) {
@@ -41,6 +71,3 @@ void storeTemperatureData(float temperature) {
   // Store the temperature data using the generic store function
   storeSensorData("temperature", temperature);
 }
-
-
-#endif

@@ -1,7 +1,5 @@
 #include <Arduino.h>
 
-// sensors functions
-#include "sensors.h"
 // firebase functions
 #include "firebase.h"
 
