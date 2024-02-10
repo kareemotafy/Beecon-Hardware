@@ -6,7 +6,8 @@ FirebaseAuth auth;
 FirebaseConfig config;
 FirebaseData fbdo;
 
-void wifiConnect(const char* ssid, const char* password) {
+
+void wifi_connect(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
   Serial.print("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -19,7 +20,23 @@ void wifiConnect(const char* ssid, const char* password) {
   Serial.println();
 }
 
-void firebaseInit(const char* apiKey, const char* dbUrl) {
+void disableWiFi() {
+  WiFi.disconnect(true); // Disconnect WiFi and release resources
+  WiFi.mode(WIFI_OFF);   // Turn off WiFi module
+  Serial.println("WiFi disabled");
+}
+
+void enableWiFi(const char* ssid, const char* password) {
+  WiFi.mode(WIFI_STA);  // Enable WiFi module
+  WiFi.begin(ssid, password); // Reconnect to WiFi
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Reconnecting to WiFi...");
+  }
+  Serial.println("WiFi reconnected!");
+}
+
+void firebase_init(const char* apiKey, const char* dbUrl) {
   config.api_key = apiKey;
   config.database_url = dbUrl;
 
@@ -39,7 +56,7 @@ void firebaseInit(const char* apiKey, const char* dbUrl) {
 }
 
 // Generic function to store sensor data in Firebase
-void storeSensorData(const char* sensorName, float sensorValue) {
+void store_sensor_data(const char* sensorName, float sensorValue) {
   // Create a JSON object to store the sensor data
   FirebaseJson sensorDataJson;
 
@@ -59,15 +76,10 @@ void storeSensorData(const char* sensorName, float sensorValue) {
 
   // Check if the sensor node is pushed to Firebase 
   if (Firebase.RTDB.pushJSON(&fbdo, String("/") + sensorName, &sensorNode)) {
-    Serial.println("Data pushed to Firebase");
+    Serial.print(sensorName);
+    Serial.println(" pushed to Firebase");
   } 
   else {
     Serial.println(fbdo.errorReason());
   }
-}
-
-// Function to store temperature data in Firebase
-void storeTemperatureData(float temperature) {
-  // Store the temperature data using the generic store function
-  storeSensorData("temperature", temperature);
 }
