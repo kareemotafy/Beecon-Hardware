@@ -1,11 +1,11 @@
-#include <Arduino.h>
-
-// firebase functions
 #include "firebase.h"
+#include "temp_humid.h"
+#include "mic.h"
+#include "weight.h"
 
 // Insert your network credentials
-#define WIFI_SSID "YOUR_SSID"
-#define WIFI_PASSWORD "YOUR_PASSWORD"
+#define WIFI_SSID "Your SSID"
+#define WIFI_PASSWORD "Your Password"
 
 // Insert Firebase project API Key
 #define API_KEY "AIzaSyCIB8GeCh0hNUihhEy3AKFxrFbvK3YAcYk"
@@ -13,7 +13,26 @@
 // Insert RTDB URLefine the RTDB URL */
 #define DATABASE_URL "https://iotbeehive-9e6e7-default-rtdb.europe-west1.firebasedatabase.app/"
 
-#define temperatureSensorPin 13
+// Insert sensor pins
+#define MIC_PIN 12
+#define WEIGHT_DOUT_PIN 13
+#define WEIGHT_SCK_PIN 14
+#define DHT_PIN 15
+
+// insert mic sample window
+#define MIC_sampleWindow 50
+
+// insert weight parameters
+#define WEIGHT_calibrationFactor 6.36
+#define WEIGHT_numReadings 10
+
+// Define sensor classes
+TempHumidModule temp_humid(DHT_PIN);
+MicModule MicModule(MIC_sampleWindow, MIC_PIN);
+WeightModule WeightModule(WEIGHT_DOUT_PIN, WEIGHT_SCK_PIN);
+
+int mic_data = 0;
+float humidity_data, temperature_data, weight_data;
 
 void setup()
 {
@@ -21,25 +40,53 @@ void setup()
   Serial.begin(115200);
 
   // Wifi Connection
-  wifiConnect(WIFI_SSID, WIFI_PASSWORD);
+  wifi_connect(WIFI_SSID, WIFI_PASSWORD);
 
   // initialize Firebase
-  firebaseInit(API_KEY, DATABASE_URL);
+  firebase_init(API_KEY, DATABASE_URL);
+
+  // initialize sensors
+  temp_humid.initialize();
+  WeightModule.initialize();
+  WeightModule.calibrateAndTare(WEIGHT_calibrationFactor);
+
+  // Disable WiFi initially
+  disableWiFi();
 }
 
 void loop()
 {
+  // Read mic data
+  mic_data = MicModule.read_mic();
 
-  // Read the temperature from the sensor
-  float temperature = analogRead(temperatureSensorPin) * 5.0 / 1024.0;
+  // Read humidity and temperature
+  temp_humid.readData(humidity_data, temperature_data);
+
+  // Read weight data
+  weight_data = WeightModule.getWeight(WEIGHT_numReadings);
+  WeightModule.printReadings(WEIGHT_numReadings);
+
+  // Re-enable WiFi
+  enableWiFi(WIFI_SSID, WIFI_PASSWORD);
+
+  // Add any necessary WiFi operations here
+  Serial.println("Sending to Database...");
 
   // Store the temperature data in Firebase
-  storeTemperatureData(temperature);
+  store_sensor_data("temperature", temperature_data);
 
-  // Print the temperature to the serial monitor
-  Serial.print("Temperature: ");
-  Serial.println(temperature);
+  // Store the humidity data in Firebase
+  store_sensor_data("humidity", humidity_data);
 
-  // Wait for 1 second before reading the temperature again
-  delay(1000);
+  // Store the mic data in Firebase
+  store_sensor_data("sound", mic_data);
+
+  // Store the weight data in Firebase
+  store_sensor_data("weight", weight_data);
+
+  // Disable WiFi again for analog reading
+  disableWiFi();
+
+  // wait a few seconds between measurements.
+  delay(2000);
 }
