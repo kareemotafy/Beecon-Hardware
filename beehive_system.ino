@@ -14,10 +14,10 @@
 #define DATABASE_URL "https://iotbeehive-9e6e7-default-rtdb.europe-west1.firebasedatabase.app/"
 
 // Insert sensor pins
-#define DHT_PIN 16
 #define MIC_PIN 12
 #define WEIGHT_DOUT_PIN 13
 #define WEIGHT_SCK_PIN 14
+#define DHT_PIN 15
 
 // insert mic sample window
 #define MIC_sampleWindow 50
@@ -59,14 +59,8 @@ void loop()
   // Read mic data
   mic_data = MicModule.read_mic();
 
-  // wait a few seconds between measurements.
-  delay(1000);
-
   // Read humidity and temperature
   temp_humid.readData(humidity_data, temperature_data);
-
-  // wait a few seconds between measurements.
-  delay(1000);
 
   // Read weight data
   weight_data = WeightModule.getWeight(WEIGHT_numReadings);
@@ -76,29 +70,23 @@ void loop()
   enableWiFi(WIFI_SSID, WIFI_PASSWORD);
 
   // Add any necessary WiFi operations here
-  Serial.println("hokololo sending...");
-
-  // // Store the mic data in Firebase
-  store_sensor_data("sound", mic_data);
-
-  // wait a few seconds between measurements.
-  delay(2000);
+  Serial.println("Sending to Database...");
 
   // Store the temperature data in Firebase
   store_sensor_data("temperature", temperature_data);
 
-  // wait a few seconds between measurements.
-  delay(2000);
-
-  // // Store the humidity data in Firebase
+  // Store the humidity data in Firebase
   store_sensor_data("humidity", humidity_data);
 
-  // wait a few seconds between measurements.
-  delay(2000);
+  // Store the mic data in Firebase
+  store_sensor_data("sound", mic_data);
 
   // Store the weight data in Firebase
   store_sensor_data("weight", weight_data);
 
   // Disable WiFi again for analog reading
   disableWiFi();
+
+  // wait a few seconds between measurements.
+  delay(2000);
 }

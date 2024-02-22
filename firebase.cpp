@@ -4,7 +4,6 @@
 
 FirebaseAuth auth;
 FirebaseConfig config;
-FirebaseData fbdo;
 
 
 void wifi_connect(const char* ssid, const char* password) {
@@ -57,22 +56,12 @@ void firebase_init(const char* apiKey, const char* dbUrl) {
 
 // Generic function to store sensor data in Firebase
 void store_sensor_data(const char* sensorName, float sensorValue) {
+  FirebaseData fbdo;
+
   // Create a JSON object to store the sensor data
-  FirebaseJson sensorDataJson;
-
-  // Add sensor name and sensor value as two fields of the json
-  sensorDataJson.set("sensorName", sensorName);
-  sensorDataJson.set("sensorValue", sensorValue);
-
-  // Set the timestamp for the sensor data
-  FirebaseJson timestampJson;
-  timestampJson.set("timestamp", millis());
-
-  // Create a parent node for the timestamp and sensor data
   FirebaseJson sensorNode;
-  sensorNode.set("timestamp", timestampJson);
-  sensorNode.set("sensorData", sensorDataJson);
-
+  sensorNode.set("sensorData", sensorValue);
+  sensorNode.set("timestamp", millis());
 
   // Check if the sensor node is pushed to Firebase 
   if (Firebase.RTDB.pushJSON(&fbdo, String("/") + sensorName, &sensorNode)) {
