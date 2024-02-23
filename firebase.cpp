@@ -72,3 +72,20 @@ void store_sensor_data(const char* sensorName, float sensorValue) {
     Serial.println(fbdo.errorReason());
   }
 }
+void store_camera_data(const char* sensorName, String sensorValue) {
+  FirebaseData fbdo;
+
+  // Create a JSON object to store the sensor data
+  FirebaseJson sensorNode;
+  sensorNode.set("sensorData", sensorValue);
+  sensorNode.set("timestamp", millis());
+
+  // Check if the sensor node is pushed to Firebase 
+  if (Firebase.RTDB.pushJSON(&fbdo, String("/") + sensorName, &sensorNode)) {
+    Serial.print(sensorName);
+    Serial.println(" pushed to Firebase");
+  } 
+  else {
+    Serial.println(fbdo.errorReason());
+  }
+}
