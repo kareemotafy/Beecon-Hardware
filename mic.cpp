@@ -3,6 +3,10 @@
 
 MicModule::MicModule(int sampleWindow, int MIC_PIN) : sampleWindow(sampleWindow), MIC_PIN(MIC_PIN) {}  // sample window set to 50 ms (20 hz) to be set for bees
 
+void MicModule::initialize() {
+  pinMode(MIC_PIN, INPUT);
+}
+
 
 int MicModule::read_mic() {
     unsigned long startMillis = millis(); // Start of sample window

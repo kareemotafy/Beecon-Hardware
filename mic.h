@@ -4,6 +4,7 @@
 class MicModule {
 public:
     MicModule(int sampleWindow, int MIC_PIN);
+    void initialize();
     int read_mic();
 
 private:
