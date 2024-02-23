@@ -4,7 +4,11 @@
 #include <Arduino.h>
 #include "HX711.h"
 
-class WeightModule {
+#define WEIGHT_DOUT_PIN 13
+#define WEIGHT_SCK_PIN 14
+
+class WeightModule
+{
 public:
   WeightModule(int doutPin, int sckPin);
   void initialize();
@@ -13,7 +17,6 @@ public:
   float getWeight(int numReadings);
   void printReadings(int numReadings);
   int scaleCalibration(int knownWeight);
-
 
 private:
   int doutPin;
