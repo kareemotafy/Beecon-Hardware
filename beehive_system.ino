@@ -2,7 +2,9 @@
 #include "temp_humid.h"
 #include "mic.h"
 #include "weight.h"
+#include "fan.h"
 #include "camera.h"
+
 
 // Insert your network credentials
 #define WIFI_SSID "Your SSID"
@@ -19,6 +21,7 @@
 #define WEIGHT_DOUT_PIN 13
 #define WEIGHT_SCK_PIN 14
 #define DHT_PIN 15
+#define FAN_PIN 16
 
 // insert mic sample window
 #define MIC_sampleWindow 50
@@ -27,10 +30,15 @@
 #define WEIGHT_calibrationFactor 6.36
 #define WEIGHT_numReadings 10
 
+// insert fan parameters
+#define FAN_HEAT_THRES 20
+#define FAN_COOL_THRES 35
+
 // Define sensor classes
 TempHumidModule temp_humid(DHT_PIN);
 MicModule MicModule(MIC_sampleWindow, MIC_PIN);
 WeightModule WeightModule(WEIGHT_DOUT_PIN, WEIGHT_SCK_PIN);
+Fan Fan(FAN_PIN);
 
 int mic_data = 0;
 float humidity_data, temperature_data, weight_data;
@@ -49,9 +57,13 @@ void setup()
 
   // initialize sensors
   temp_humid.initialize();
+  MicModule.initialize();
   WeightModule.initialize();
   WeightModule.calibrateAndTare(WEIGHT_calibrationFactor);
   setupCamera();
+
+  // initialize actuators
+  Fan.initialize();
 
   // Disable WiFi initially
   disableWiFi();
@@ -64,6 +76,7 @@ void loop()
 
   // Read humidity and temperature
   temp_humid.readData(humidity_data, temperature_data);
+  Fan.run(temperature_data, FAN_HEAT_THRES, FAN_COOL_THRES);
 
   // Read weight data
   weight_data = WeightModule.getWeight(WEIGHT_numReadings);
