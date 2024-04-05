@@ -3,7 +3,8 @@
 
 #include "DHT.h"
 
-class TempHumidModule {
+class TempHumidModule
+{
 public:
     TempHumidModule(int dhtPin);
     void initialize();
@@ -14,4 +15,4 @@ private:
     DHT dht;
 };
 
-#endif  // TEMP_HUMID_MODULE_H
+#endif // TEMP_HUMID_MODULE_H

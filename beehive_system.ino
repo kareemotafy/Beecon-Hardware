@@ -3,6 +3,8 @@
 #include "mic.h"
 #include "weight.h"
 #include "fan.h"
+#include "camera.h"
+
 
 // Insert your network credentials
 #define WIFI_SSID "Your SSID"
@@ -43,6 +45,7 @@ float humidity_data, temperature_data, weight_data;
 
 void setup()
 {
+
   // begin serial communication
   Serial.begin(115200);
 
@@ -57,6 +60,7 @@ void setup()
   MicModule.initialize();
   WeightModule.initialize();
   WeightModule.calibrateAndTare(WEIGHT_calibrationFactor);
+  setupCamera();
 
   // initialize actuators
   Fan.initialize();
@@ -80,9 +84,10 @@ void loop()
 
   // Re-enable WiFi
   enableWiFi(WIFI_SSID, WIFI_PASSWORD);
-
   // Add any necessary WiFi operations here
   Serial.println("Sending to Database...");
+
+  processStream();
 
   // Store the temperature data in Firebase
   store_sensor_data("temperature", temperature_data);
@@ -96,9 +101,15 @@ void loop()
   // Store the weight data in Firebase
   store_sensor_data("weight", weight_data);
 
+  // delays sensor reading by 5 seconds
+  // updates the stream every 500 milliseconds
+  for (int i = 0; i < 10; i++)
+  {
+    processStream();
+    delay(500);
+  }
+  
   // Disable WiFi again for analog reading
   disableWiFi();
 
-  // wait a few seconds between measurements.
-  delay(2000);
 }
