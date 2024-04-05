@@ -5,7 +5,6 @@
 #include "fan.h"
 #include "camera.h"
 
-
 // Insert your network credentials
 #define WIFI_SSID "Your SSID"
 #define WIFI_PASSWORD "Your Password"
@@ -23,9 +22,6 @@
 #define DHT_PIN 15
 #define FAN_PIN 16
 
-// insert mic sample window
-#define MIC_sampleWindow 50
-
 // insert weight parameters
 #define WEIGHT_calibrationFactor 6.36
 #define WEIGHT_numReadings 10
@@ -36,7 +32,7 @@
 
 // Define sensor classes
 TempHumidModule temp_humid(DHT_PIN);
-MicModule MicModule(MIC_sampleWindow, MIC_PIN);
+MicModule MicModule(MIC_PIN);
 WeightModule WeightModule(WEIGHT_DOUT_PIN, WEIGHT_SCK_PIN);
 Fan Fan(FAN_PIN);
 
@@ -108,8 +104,7 @@ void loop()
     processStream();
     delay(500);
   }
-  
+
   // Disable WiFi again for analog reading
   disableWiFi();
-
 }

@@ -4,12 +4,11 @@
 class MicModule
 {
 public:
-    MicModule(int sampleWindow, int MIC_PIN);
+    MicModule(int MIC_PIN);
     void initialize();
     int read_mic();
 
 private:
-    const int sampleWindow;
     const int MIC_PIN;
     unsigned int sample;
 };
