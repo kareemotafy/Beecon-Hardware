@@ -10,13 +10,16 @@ void Fan::initialize() {
 
 void Fan::run(float temp, float heatThreshold, float coolThreshold) {
   if(temp > coolThreshold){
-    digitalWrite(FAN_PIN, HIGH); 
+    digitalWrite(FAN_PIN, LOW); 
+    Serial.println("Cooling");
   }
   else if(temp < heatThreshold){
-    digitalWrite(FAN_PIN, HIGH); 
+    digitalWrite(FAN_PIN, LOW); 
+    Serial.println("Heating");
   }
   else{
-    digitalWrite(FAN_PIN, LOW); 
+    digitalWrite(FAN_PIN, HIGH);
+    Serial.println("Fan is off");
   }
 }
 
