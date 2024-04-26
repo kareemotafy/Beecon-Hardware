@@ -1,7 +1,8 @@
 #ifndef FAN_H
 #define FAN_H
 
-class Fan {
+class Fan
+{
 public:
     Fan(int FAN_PIN);
     void initialize();
