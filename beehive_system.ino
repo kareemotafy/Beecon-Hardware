@@ -87,27 +87,27 @@ void loop()
   processStream();
 
   // Store the temperature data in Firebase
-  store_sensor_data("temperature", 22.8);
+  store_sensor_data("temperature", temperature_data);
 
   // Store the humidity data in Firebase
-  store_sensor_data("humidity", 36.5);
+  store_sensor_data("humidity", humidity_data);
 
   // Store the mic data in Firebase
   store_sensor_data("sound", mic_data);
 
   // Store the weight data in Firebase
-  store_sensor_data("weight", 5.2);
+  store_sensor_data("weight", weight_data);
 
   //---------Firestore Requests---------//
   Serial.println("Sending to Firestore...");
 
   firestoreDataUpdate("sound", mic_data);
 
-  firestoreDataUpdate("temperature", 22.8);
+  firestoreDataUpdate("temperature", temperature_data);
 
-  firestoreDataUpdate("humidity", 36.5);
+  firestoreDataUpdate("humidity", humidity_data);
 
-  firestoreDataUpdate("weight", 5.2);
+  firestoreDataUpdate("weight", weight_data);
 
   // delays sensor reading by 5 seconds
   // updates the stream every 500 milliseconds
