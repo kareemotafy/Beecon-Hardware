@@ -72,6 +72,7 @@ void store_sensor_data(const char *sensorName, float sensorValue)
   // Create a JSON object to store the sensor data
   FirebaseJson sensorNode;
   sensorNode.set("sensorData", sensorValue);
+  sensorNode.set("Ts/.sv", "timestamp");
 
   // Check if the sensor node is pushed to Firebase
   if (Firebase.RTDB.setJSON(&fbdo, String("/") + sensorName, &sensorNode))
@@ -92,7 +93,7 @@ void store_camera_data(const char *sensorName, String sensorValue)
   // Create a JSON object to store the sensor data
   FirebaseJson sensorNode;
   sensorNode.set("sensorData", sensorValue);
-  sensorNode.set("timestamp", millis());
+  sensorNode.set("Ts/.sv", "timestamp");
 
   // Check if the sensor node is pushed to Firebase
   if (Firebase.RTDB.setJSON(&fbdo, String("/") + sensorName, &sensorNode))
