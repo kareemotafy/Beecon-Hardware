@@ -7,8 +7,10 @@
 void wifi_connect(const char *ssid, const char *password);
 void disableWiFi();
 void enableWiFi(const char *ssid, const char *password);
-void firebase_init(const char *apiKey, const char *dbUrl);
+void firebase_init(const char *apiKey, const char *dbUrl, const char *projectId);
 void store_sensor_data(const char *sensorName, float sensorValue);
 void store_camera_data(const char *sensorName, String sensorValue);
+void firestoreDataUpdate(const char *sensorName, float sensorValue);
+String generateRandomString(size_t length);
 
 #endif // FIREBASE_H
