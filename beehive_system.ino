@@ -11,6 +11,7 @@
 
 // Insert Firebase project API Key
 #define API_KEY "AIzaSyCIB8GeCh0hNUihhEy3AKFxrFbvK3YAcYk"
+#define PROJECT_ID "iotbeehive-9e6e7"
 
 // Insert RTDB URLefine the RTDB URL */
 #define DATABASE_URL "https://iotbeehive-9e6e7-default-rtdb.europe-west1.firebasedatabase.app/"
@@ -41,7 +42,6 @@ float humidity_data, temperature_data, weight_data;
 
 void setup()
 {
-
   // begin serial communication
   Serial.begin(115200);
 
@@ -49,7 +49,7 @@ void setup()
   wifi_connect(WIFI_SSID, WIFI_PASSWORD);
 
   // initialize Firebase
-  firebase_init(API_KEY, DATABASE_URL);
+  firebase_init(API_KEY, DATABASE_URL, PROJECT_ID);
 
   // initialize sensors
   temp_humid.initialize();
@@ -80,22 +80,34 @@ void loop()
 
   // Re-enable WiFi
   enableWiFi(WIFI_SSID, WIFI_PASSWORD);
-  // Add any necessary WiFi operations here
-  Serial.println("Sending to Database...");
+
+  //---------RTDB Requests---------//
+  Serial.println("Sending to RTDB...");
 
   processStream();
 
   // Store the temperature data in Firebase
-  store_sensor_data("temperature", temperature_data);
+  store_sensor_data("temperature", 22.8);
 
   // Store the humidity data in Firebase
-  store_sensor_data("humidity", humidity_data);
+  store_sensor_data("humidity", 36.5);
 
   // Store the mic data in Firebase
   store_sensor_data("sound", mic_data);
 
   // Store the weight data in Firebase
-  store_sensor_data("weight", weight_data);
+  store_sensor_data("weight", 5.2);
+
+  //---------Firestore Requests---------//
+  Serial.println("Sending to Firestore...");
+
+  firestoreDataUpdate("sound", mic_data);
+
+  firestoreDataUpdate("temperature", 22.8);
+
+  firestoreDataUpdate("humidity", 36.5);
+
+  firestoreDataUpdate("weight", 5.2);
 
   // delays sensor reading by 5 seconds
   // updates the stream every 500 milliseconds
