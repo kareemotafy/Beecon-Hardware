@@ -62,68 +62,65 @@ void setup()
 
   // initialize actuators
   Fan.initialize();
-
-  // Disable WiFi initially
-  disableWiFi();
 }
 
 void loop()
 {
-  // Read humidity and temperature
-  temp_humid.readData(humidity_data, temperature_data);
-
-  // Read mic data
-  mic_data = MicModule.read_mic();
-
-  // Read weight data
-  weight_data = WeightModule.getWeight(WEIGHT_numReadings);
-
-  // Re-enable WiFi
-  enableWiFi(WIFI_SSID, WIFI_PASSWORD);
-
-  //---------RTDB Requests---------//
-  Serial.println("Sending to RTDB...");
-
-  heat_thresh = get_float_value("heatThresh");
-  cool_thresh = get_float_value("coolThresh");
-
-  Serial.print("Heat thresh: ");
-  Serial.println(heat_thresh);
-  Serial.print("Cool Thresh: ");
-  Serial.println(cool_thresh);
-
-  Fan.run(temperature_data, heat_thresh, cool_thresh);
-
-  // Store the temperature data in Firebase
-  store_sensor_data("temperature", temperature_data);
-
-  // Store the humidity data in Firebase
-  store_sensor_data("humidity", humidity_data);
-
-  // Store the mic data in Firebase
-  store_sensor_data("sound", mic_data);
-
-  // Store the weight data in Firebase
-  store_sensor_data("weight", weight_data);
-
-  // delays sensor reading by 5 seconds
-  // updates the stream every 500 milliseconds
   isCameraOn = get_bool_value("isCameraOn");
-
   Serial.print("Is camera on: ");
   Serial.println(isCameraOn);
 
-  if (isCameraOn)
+  if (!isCameraOn)
   {
-    Serial.println("Camera is on");
-    for (int i = 0; i < 10; i++)
-    {
-      processStream();
-      delay(500);
-    }
-    Serial.println("Camera is off");
+    // Disable WiFi initially
+    disableWiFi();
+
+    delay(100);
+
+    // Read humidity and temperature
+    temp_humid.readData(humidity_data, temperature_data);
+
+    // Read mic data
+    mic_data = MicModule.read_mic();
+
+    // Read weight data
+    weight_data = WeightModule.getWeight(WEIGHT_numReadings);
+
+    // Re-enable WiFi
+    enableWiFi(WIFI_SSID, WIFI_PASSWORD);
+
+    //---------RTDB Requests---------//
+    Serial.println("Sending to RTDB...");
+
+    heat_thresh = get_float_value("heatThresh");
+    cool_thresh = get_float_value("coolThresh");
+
+    Serial.print("Heat thresh: ");
+    Serial.println(heat_thresh);
+    Serial.print("Cool Thresh: ");
+    Serial.println(cool_thresh);
+
+    Fan.run(temperature_data, heat_thresh, cool_thresh);
+
+    // Store the temperature data in Firebase
+    store_sensor_data("temperature", temperature_data);
+
+    // Store the humidity data in Firebase
+    store_sensor_data("humidity", humidity_data);
+
+    // Store the mic data in Firebase
+    store_sensor_data("sound", mic_data);
+
+    // Store the weight data in Firebase
+    store_sensor_data("weight", weight_data);
   }
 
-  // Disable WiFi again for analog reading
-  disableWiFi();
+  else
+  {
+    Serial.println("Camera is on");
+
+    processStream();
+
+    Serial.println("Camera is off");
+  }
 }
