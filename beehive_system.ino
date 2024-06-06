@@ -21,10 +21,10 @@
 #define WEIGHT_DOUT_PIN 13
 #define WEIGHT_SCK_PIN 14
 #define DHT_PIN 15
-#define FAN_PIN 16
+#define FAN_PIN 2
 
 // insert weight parameters
-#define WEIGHT_calibrationFactor 6.36
+#define WEIGHT_calibrationFactor 58
 #define WEIGHT_numReadings 10
 
 // insert fan parameters
@@ -69,15 +69,14 @@ void setup()
 
 void loop()
 {
-  // Read mic data
-  mic_data = MicModule.read_mic();
-
   // Read humidity and temperature
   temp_humid.readData(humidity_data, temperature_data);
 
+  // Read mic data
+  mic_data = MicModule.read_mic();
+
   // Read weight data
   weight_data = WeightModule.getWeight(WEIGHT_numReadings);
-  WeightModule.printReadings(WEIGHT_numReadings);
 
   // Re-enable WiFi
   enableWiFi(WIFI_SSID, WIFI_PASSWORD);
@@ -116,7 +115,6 @@ void loop()
 
   if (isCameraOn)
   {
-
     Serial.println("Camera is on");
     for (int i = 0; i < 10; i++)
     {
