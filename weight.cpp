@@ -5,24 +5,10 @@ WeightModule::WeightModule(int doutPin, int sckPin)
 
 void WeightModule::initialize()
 {
-  // Serial.begin(57600);
   Serial.println("HX711 Demo");
   Serial.println("Initializing the scale");
 
   scale.begin(doutPin, sckPin);
-}
-
-void WeightModule::printScaleInfo()
-{
-  Serial.println("Before setting up the scale:");
-  Serial.print("read: \t\t");
-  Serial.println(scale.read());
-  Serial.print("read average: \t\t");
-  Serial.println(scale.read_average(20));
-  Serial.print("get value: \t\t");
-  Serial.println(scale.get_value(5));
-  Serial.print("get units: \t\t");
-  Serial.println(scale.get_units(5), 1);
 }
 
 void WeightModule::calibrateAndTare(float calibrationFactor)
@@ -33,15 +19,11 @@ void WeightModule::calibrateAndTare(float calibrationFactor)
 
 float WeightModule::getWeight(int numReadings)
 {
-  return scale.get_units(numReadings);
-}
+  float weight = scale.get_units(numReadings);
+  Serial.print("Weight = ");
+  Serial.println(weight);
 
-void WeightModule::printReadings(int numReadings)
-{
-  Serial.print("one reading:\t");
-  Serial.print(scale.get_units(), 1);
-  Serial.print("\t| average:\t");
-  Serial.println(scale.get_units(numReadings), 5);
+  return weight;
 }
 
 int WeightModule::scaleCalibration(int knownWeight)
