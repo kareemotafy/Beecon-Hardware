@@ -114,9 +114,9 @@ void loop()
     // Store the weight data in Firebase
     store_sensor_data("weight", weight_data);
   }
-
   else
   {
+    // Start video streaming
     Serial.println("Camera is on");
 
     processStream();
