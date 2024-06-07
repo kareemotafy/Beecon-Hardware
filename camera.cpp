@@ -105,7 +105,7 @@ void setupCamera()
     {
         config.frame_size = FRAMESIZE_VGA;
         config.jpeg_quality = 12; // 0-63 lower number means higher quality
-        config.fb_count = 1;
+        config.fb_count = 2;
     }
     else
     {
@@ -123,7 +123,7 @@ void setupCamera()
         ESP.restart();
     }
     sensor_t *s = esp_camera_sensor_get();
-    s->set_framesize(s, FRAMESIZE_QQVGA); // VGA|CIF|QVGA|HQVGA|QQVGA   ( UXGA? SXGA? XGA? SVGA? )
+    s->set_framesize(s, FRAMESIZE_QVGA); // VGA|CIF|QVGA|HQVGA|QQVGA   ( UXGA? SXGA? XGA? SVGA? )
 }
 
 void processStream()

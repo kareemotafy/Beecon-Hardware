@@ -12,10 +12,8 @@ class WeightModule
 public:
   WeightModule(int doutPin, int sckPin);
   void initialize();
-  void printScaleInfo();
   void calibrateAndTare(float calibrationFactor);
   float getWeight(int numReadings);
-  void printReadings(int numReadings);
   int scaleCalibration(int knownWeight);
 
 private:

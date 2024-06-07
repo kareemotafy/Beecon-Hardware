@@ -8,7 +8,7 @@ void Fan::initialize()
   pinMode(FAN_PIN, OUTPUT);
 }
 
-void Fan::run(float temp, float heatThreshold, float coolThreshold)
+void Fan::run(float &temp, float &heatThreshold, float &coolThreshold)
 {
   if (temp > coolThreshold)
   {

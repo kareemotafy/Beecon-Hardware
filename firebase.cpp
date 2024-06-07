@@ -4,6 +4,7 @@
 
 FirebaseAuth auth;
 FirebaseConfig config;
+
 String PROJECT_ID;
 
 void wifi_connect(const char *ssid, const char *password)
@@ -107,6 +108,46 @@ void store_camera_data(const char *sensorName, String sensorValue)
   }
 }
 
+bool get_bool_value(const char *topicName)
+{
+  FirebaseData fbdo;
+
+  bool value;
+
+  // Check if the sensor node is pushed to Firebase
+  if (Firebase.RTDB.getBool(&fbdo, String("/") + topicName, &value))
+  {
+    Serial.print(topicName);
+    Serial.println(" is retrived from Firebase");
+    return value;
+  }
+  else
+  {
+    Serial.println(fbdo.errorReason());
+    return false;
+  }
+}
+
+float get_float_value(const char *topicName)
+{
+  FirebaseData fbdo;
+
+  float value;
+
+  // Check if the sensor node is pushed to Firebase
+  if (Firebase.RTDB.getFloat(&fbdo, String("/") + topicName, &value))
+  {
+    Serial.print(topicName);
+    Serial.println(" is retrived from Firebase");
+    return value;
+  }
+  else
+  {
+    Serial.println(fbdo.errorReason());
+    return 0;
+  }
+}
+
 String generateRandomString(size_t length)
 {
   const String charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -138,12 +179,13 @@ void firestoreDataUpdate(const char *sensorName, float sensorValue)
 
   // Set the document content to write (transform)
   FirebaseJson content;
-  String documentPath = "sensors/" + String(sensorName);
+  String documentPath = "sensors/" + String(sensorName) + "/data/" + String(id);
 
-  content.set("fields/" + id + "/mapValue/fields/value/doubleValue", String(sensorValue).c_str());
+  content.set("fields/value/doubleValue", sensorValue);
 
   // Set the update document content
   update_write.update_document_content = content.raw();
+
   update_write.update_masks = id;
 
   // Set the update document path
@@ -165,12 +207,13 @@ void firestoreDataUpdate(const char *sensorName, float sensorValue)
   struct firebase_firestore_document_write_field_transforms_t field_transforms;
 
   // Set field path to write.
-  field_transforms.fieldPath = id + ".timestamp";
+  field_transforms.fieldPath = "timestamp";
 
   // Set the transformation type.
   field_transforms.transform_type = firebase_firestore_transform_type_set_to_server_value;
 
   // Set the transformation content, server value for this case.
+  // See https://firebase.google.com/docs/firestore/reference/rest/v1/Write#servervalue
   field_transforms.transform_content = "REQUEST_TIME"; // set timestamp to timestamp field
 
   // Add a field transformation object to a write object.
