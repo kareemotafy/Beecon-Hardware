@@ -4,6 +4,7 @@
 
 FirebaseAuth auth;
 FirebaseConfig config;
+
 String PROJECT_ID;
 
 void wifi_connect(const char *ssid, const char *password)
@@ -178,9 +179,9 @@ void firestoreDataUpdate(const char *sensorName, float sensorValue)
 
   // Set the document content to write (transform)
   FirebaseJson content;
-  String documentPath = "sensors/" + String(sensorName);
+  String documentPath = "sensors/" + String(sensorName) + "/data/" + String(id);
 
-  content.set("fields/" + id + "/mapValue/fields/value/doubleValue", String(sensorValue).c_str());
+  content.set("fields/value/doubleValue", sensorValue);
 
   // Set the update document content
   update_write.update_document_content = content.raw();
@@ -206,7 +207,7 @@ void firestoreDataUpdate(const char *sensorName, float sensorValue)
   struct firebase_firestore_document_write_field_transforms_t field_transforms;
 
   // Set field path to write.
-  field_transforms.fieldPath = id + ".timestamp";
+  field_transforms.fieldPath = "timestamp";
 
   // Set the transformation type.
   field_transforms.transform_type = firebase_firestore_transform_type_set_to_server_value;
